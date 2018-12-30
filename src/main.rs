@@ -5,7 +5,6 @@
 #![feature(asm)]
 #![feature(nll)]
 #![feature(const_fn)]
-#![feature(panic_implementation)]
 #![no_std]
 #![no_main]
 
@@ -243,9 +242,8 @@ fn enable_write_protect_bit() {
     unsafe { Cr0::update(|cr0| *cr0 |= Cr0Flags::WRITE_PROTECT) };
 }
 
-#[panic_implementation]
-#[no_mangle]
-pub extern "C" fn panic(info: &PanicInfo) -> ! {
+#[panic_handler]
+fn panic(info: &PanicInfo) -> ! {
     use core::fmt::Write;
     write!(printer::Printer, "{}", info).unwrap();
     loop {}
